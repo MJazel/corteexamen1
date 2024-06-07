@@ -1,31 +1,27 @@
 package com.example.examencorte1;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 
 public class CalculadoraActivity extends AppCompatActivity {
 
     private TextView lblUsuario, lblResultado;
     private EditText etNum1, etNum2;
     private Button btnSuma, btnResta, btnMulti, btnDiv, btnLimpiar, btnRegresar;
-
+    private Calculadora calculadora;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_calculadora);
+
+        calculadora = new Calculadora();
+
         lblUsuario = findViewById(R.id.lblUsuario);
         lblResultado = findViewById(R.id.lblResultado);
         etNum1 = findViewById(R.id.etNum1);
@@ -94,23 +90,25 @@ public class CalculadoraActivity extends AppCompatActivity {
 
         float num1 = Float.parseFloat(num1Str);
         float num2 = Float.parseFloat(num2Str);
+
+        calculadora.setNumeros(num1, num2);
         float resultado = 0;
 
         switch (operacion) {
             case "+":
-                resultado = num1 + num2;
+                resultado = calculadora.suma();
                 break;
             case "-":
-                resultado = num1 - num2;
+                resultado = calculadora.resta();
                 break;
             case "*":
-                resultado = num1 * num2;
+                resultado = calculadora.multiplicacion();
                 break;
             case "/":
-                if (num2 != 0) {
-                    resultado = num1 / num2;
-                } else {
-                    lblResultado.setText("Error: División por cero");
+                try {
+                    resultado = calculadora.division();
+                } catch (IllegalArgumentException e) {
+                    lblResultado.setText("Error: " + e.getMessage());
                     return;
                 }
                 break;
